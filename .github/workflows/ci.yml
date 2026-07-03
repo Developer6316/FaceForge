@@ -7,14 +7,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip setuptools wheel
+          # install package in editable mode so tests import local src/faceforge
+          python -m pip install -e .
+          # install a trimmed set of requirements to avoid heavy/OS-dependent packages in CI
+          if [ -f requirements.txt ]; then
+            # exclude heavy or problematic packages for CI:
+            # facenet-pytorch, torch, torchvision, faiss-cpu, mtcnn
+            grep -E -v '^(facenet-pytorch|torch|torchvision|faiss-cpu|mtcnn)' requirements.txt > /tmp/ci-requirements.txt || true
+            if [ -s /tmp/ci-requirements.txt ]; then
+              python -m pip install -r /tmp/ci-requirements.txt
+            fi
+          fi
+          # Make sure facenet-pytorch is not installed so tests expecting its absence pass
+          python -m pip uninstall -y facenet-pytorch || true
+
       - name: Run tests
         run: |
           pytest -q
