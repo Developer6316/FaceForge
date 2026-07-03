@@ -14,4 +14,3 @@ authors = [
 license = { text = "MIT" }
 
 [tool.setuptools.packages.find]
-where = ["src"]
