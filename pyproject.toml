@@ -5,12 +5,27 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "faceforge"
 version = "0.1.0"
-description = "Modular face detection and recognition toolkit with GPU and Colab support."
+description = "Modular face detection and recognition toolkit with GPU acceleration, multiple backends (OpenCV DNN, MTCNN, RetinaFace, FaceNet, InsightFace), and seamless Google Colab integration."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
   { name = "Developer6316" }
 ]
 license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.23",
+  "opencv-python>=4.7",
+  "torch>=2.0",
+  "torchvision>=0.15",
+  "mtcnn>=0.1.1",
+  "tqdm",
+  "scikit-learn",
+  "matplotlib",
+  "pillow"
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
+where = ["src"]
