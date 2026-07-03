@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -24,6 +24,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
+          # install pytest for running tests
+          python -m pip install pytest
           # install package in editable mode so tests import local src/faceforge
           python -m pip install -e .
           # install a trimmed set of requirements to avoid heavy/OS-dependent packages in CI
